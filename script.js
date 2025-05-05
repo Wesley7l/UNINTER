@@ -7,11 +7,11 @@ google.charts.setOnLoadCallback(desenharGrafico);
 function desenharGrafico() {
   // Dados de exemplo
   const dados = google.visualization.arrayToDataTable([
-    ['Mês', 'Vendas'],
-    ['Janeiro', 1000],
-    ['Fevereiro', 1170],
-    ['Março', 660],
-    ['Abril', 1030]
+    ['Mês', 'Temperatura'],
+    ['Janeiro', 21],
+    ['Fevereiro', 18],
+    ['Março', 30],
+    ['Abril', 12]
   ]);
 
   // Opções de configuração
