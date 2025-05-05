@@ -16,7 +16,7 @@ function desenharGrafico() {
 
   // Opções de configuração
   const opcoes = {
-    title: 'Vendas Mensais',
+    title: 'Temperatura',
     curveType: 'function',
     legend: { position: 'bottom' }
   };
