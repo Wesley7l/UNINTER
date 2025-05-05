@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard com Google Charts</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Dashboard com Google Charts</h1>
+  </header>
+  <main>
+    <div class="filtros">
+      <label for="filtroDia">Dia:</label>
+      <select id="filtroDia" onchange="aplicarFiltros()"></select>
+
+      <label for="filtroMes">Mês:</label>
+      <select id="filtroMes" onchange="aplicarFiltros()"></select>
+
+      <label for="filtroAno">Ano:</label>
+      <select id="filtroAno" onchange="aplicarFiltros()"></select>
+    </div>
+    <div id="grafico" style="width: 100%; max-width: 800px; height: 500px;"></div>
+  <div id="grafico_barras" style="width: 100%; max-width: 800px; height: 400px;"></div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Meu Site no GitHub</p>
+  </footer>
+</body>
+</html>
