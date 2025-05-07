@@ -1,13 +1,16 @@
 // Carregar o pacote de gráficos
 google.charts.load('current', {packages: ['corechart']});
-google.charts.setOnLoadCallback(iniciarAtualizacao);
+google.charts.setOnLoadCallback(prepararInterface);
 
 let dadosOriginais;
-let intervalo;
+let intervalo = null;
 
-function iniciarAtualizacao() {
-  atualizarDados();
-  intervalo = setInterval(atualizarDados, 1000); // Atualiza a cada 1 segundo
+function prepararInterface() {
+  document.getElementById("btnPlotar").addEventListener("click", () => {
+    atualizarDados();
+    if (intervalo) clearInterval(intervalo);
+    intervalo = setInterval(atualizarDados, 60000); // Atualiza a cada 1 minuto
+  });
 }
 
 function atualizarDados() {
@@ -83,7 +86,7 @@ function aplicarFiltros() {
   const ano = document.getElementById('filtroAno').value;
 
   const dadosAgrupados = {};
-  
+
   for (let i = 0; i < dadosOriginais.getNumberOfRows(); i++) {
     const dt = new Date(dadosOriginais.getValue(i, 0));
     const temp = dadosOriginais.getValue(i, 1);
