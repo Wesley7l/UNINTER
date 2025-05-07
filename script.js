@@ -7,7 +7,7 @@ let intervalo;
 
 function iniciarAtualizacao() {
   atualizarDados();
-  intervalo = setInterval(atualizarDados, 1000); // Atualizar a cada 1 segundo
+  intervalo = setInterval(atualizarDados, 1000); // Atualiza a cada 1 segundo
 }
 
 function atualizarDados() {
@@ -27,15 +27,24 @@ function atualizarDados() {
   });
 }
 
-function desenharGraficoFiltrado(dados) {
+function desenharGraficoFiltrado(dadosAgrupados, barrasAgrupadas) {
   const opcoes = {
-    title: 'Temperatura e Umidade (Google Sheets)',
+    title: 'Temperatura e Umidade (média por hora)',
     curveType: 'function',
     legend: { position: 'bottom' }
   };
 
   const chart = new google.visualization.LineChart(document.getElementById('grafico'));
-  chart.draw(dados, opcoes);
+  chart.draw(dadosAgrupados, opcoes);
+
+  const opcoesBarras = {
+    title: 'Pressão (média por hora)',
+    legend: { position: 'none' },
+    bars: 'vertical'
+  };
+
+  const chartBarras = new google.visualization.ColumnChart(document.getElementById('grafico_barras'));
+  chartBarras.draw(barrasAgrupadas, opcoesBarras);
 }
 
 function preencherFiltros(data) {
@@ -73,39 +82,53 @@ function aplicarFiltros() {
   const mes = document.getElementById('filtroMes').value;
   const ano = document.getElementById('filtroAno').value;
 
-  const dadosFiltrados = new google.visualization.DataTable();
-  dadosFiltrados.addColumn('date', 'Data');
-  dadosFiltrados.addColumn('number', 'Temperatura');
-  dadosFiltrados.addColumn('number', 'Umidade');
-
-  const dadosBarras = new google.visualization.DataTable();
-  dadosBarras.addColumn('date', 'Data');
-  dadosBarras.addColumn('number', 'Pressão');
-
+  const dadosAgrupados = {};
+  
   for (let i = 0; i < dadosOriginais.getNumberOfRows(); i++) {
-    const dataCompleta = new Date(dadosOriginais.getValue(i, 0));
-    const temperatura = dadosOriginais.getValue(i, 1);
-    const umidade = dadosOriginais.getValue(i, 2);
-    const pressao = dadosOriginais.getValue(i, 3);
+    const dt = new Date(dadosOriginais.getValue(i, 0));
+    const temp = dadosOriginais.getValue(i, 1);
+    const umi = dadosOriginais.getValue(i, 2);
+    const pre = dadosOriginais.getValue(i, 3);
 
     if (
-      (!dia || dataCompleta.getDate() == dia) &&
-      (!mes || dataCompleta.getMonth() + 1 == mes) &&
-      (!ano || dataCompleta.getFullYear() == ano)
+      (!dia || dt.getDate() == dia) &&
+      (!mes || dt.getMonth() + 1 == mes) &&
+      (!ano || dt.getFullYear() == ano)
     ) {
-      dadosFiltrados.addRow([dataCompleta, temperatura, umidade]);
-      dadosBarras.addRow([dataCompleta, pressao]);
+      const chaveHora = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours());
+      const key = chaveHora.toISOString();
+
+      if (!dadosAgrupados[key]) {
+        dadosAgrupados[key] = { data: chaveHora, temp: [], umi: [], pre: [] };
+      }
+
+      dadosAgrupados[key].temp.push(temp);
+      dadosAgrupados[key].umi.push(umi);
+      dadosAgrupados[key].pre.push(pre);
     }
   }
 
-  desenharGraficoFiltrado(dadosFiltrados);
+  const dadosGrafico = new google.visualization.DataTable();
+  dadosGrafico.addColumn('datetime', 'Hora');
+  dadosGrafico.addColumn('number', 'Temperatura');
+  dadosGrafico.addColumn('number', 'Umidade');
 
-  const opcoesBarras = {
-    title: 'Pressão (coluna D)',
-    legend: { position: 'none' },
-    bars: 'vertical'
-  };
+  const dadosBarras = new google.visualization.DataTable();
+  dadosBarras.addColumn('datetime', 'Hora');
+  dadosBarras.addColumn('number', 'Pressão');
 
-  const chartBarras = new google.visualization.ColumnChart(document.getElementById('grafico_barras'));
-  chartBarras.draw(dadosBarras, opcoesBarras);
+  Object.values(dadosAgrupados).forEach(agrupado => {
+    const mediaTemp = media(agrupado.temp);
+    const mediaUmi = media(agrupado.umi);
+    const mediaPre = media(agrupado.pre);
+    dadosGrafico.addRow([agrupado.data, mediaTemp, mediaUmi]);
+    dadosBarras.addRow([agrupado.data, mediaPre]);
+  });
+
+  desenharGraficoFiltrado(dadosGrafico, dadosBarras);
+}
+
+function media(lista) {
+  const sum = lista.reduce((acc, val) => acc + val, 0);
+  return lista.length ? sum / lista.length : 0;
 }
