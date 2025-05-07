@@ -12,8 +12,7 @@ function iniciarAtualizacao() {
 
 function atualizarDados() {
   const query = new google.visualization.Query(
-    //'https://docs.google.com/spreadsheets/d/1xj3LdygwymSVIRplFCI4eEdFCWjAE3rGYmgqge49rLg/gviz/tq?sheet=Página1'
-    'https://docs.google.com/spreadsheets/d/e/2PACX-1vRtbz13iCaX99y9jOQUdykySO-1qvv7OityX3FEVxjT7vPuYJlqYMqowYoZVY_nSCqQnEmDk4aQZcud/pubhtml?gid=952273823&single=true'
+    'https://docs.google.com/spreadsheets/d/1xj3LdygwymSVIRplFCI4eEdFCWjAE3rGYmgqge49rLg/gviz/tq?sheet=Página1'
   );
 
   query.send(function(resposta) {
