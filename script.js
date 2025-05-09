@@ -11,7 +11,7 @@ function prepararInterface() {
   intervalo = setInterval(atualizarDados, 60000);
   document.getElementById('btnPlotar').addEventListener('click', () => {
     plotting = true;
-    atualizarDados();
+    aplicarFiltros();
   });
 }
 
@@ -20,9 +20,9 @@ function atualizarDados() {
     'https://docs.google.com/spreadsheets/d/1xj3LdygwymSVIRplFCI4eEdFCWjAE3rGYmgqge49rLg/gviz/tq?sheet=Página1'
   );
   query.send(resposta => {
-    if (resposta.isError()) { 
-      console.error('Erro: ' + resposta.getMessage()); 
-      return; 
+    if (resposta.isError()) {
+      console.error('Erro: ' + resposta.getMessage());
+      return;
     }
     dadosOriginais = resposta.getDataTable();
     preencherFiltros(dadosOriginais);
@@ -81,29 +81,27 @@ function aplicarFiltros() {
     const dt = new Date(dadosOriginais.getValue(i, 0));
     const t = dadosOriginais.getValue(i, 1);
     const u = dadosOriginais.getValue(i, 2);
-    const p = dadosOriginais.getValue(i, 3);
     if ((!dia || dt.getDate()==dia) && (!mes || dt.getMonth()+1==mes) && (!ano || dt.getFullYear()==ano)) {
       const h = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours());
       const key = h.toISOString();
-      if (!agg[key]) agg[key] = {data:h, temp:[], umi:[], pre:[]};
+      if (!agg[key]) agg[key] = {data:h, temp:[], umi:[]};
       agg[key].temp.push(t);
       agg[key].umi.push(u);
-      agg[key].pre.push(p);
     }
   }
-  const dtLine = new google.visualization.DataTable();
-  dtLine.addColumn('datetime','Hora');
-  dtLine.addColumn('number','Temperatura');
-  dtLine.addColumn('number','Umidade');
-  const dtBar = new google.visualization.DataTable();
-  dtBar.addColumn('datetime','Hora');
-  dtBar.addColumn('number','Pressão');
+  const dtTemp = new google.visualization.DataTable();
+  dtTemp.addColumn('datetime','Hora');
+  dtTemp.addColumn('number','Temperatura');
+  const dtUmi = new google.visualization.DataTable();
+  dtUmi.addColumn('datetime','Hora');
+  dtUmi.addColumn('number','Umidade');
   Object.values(agg).forEach(a => {
     const avg = arr => arr.reduce((sum,v)=>sum+v,0)/arr.length;
-    dtLine.addRow([a.data, avg(a.temp), avg(a.umi)]);
-    dtBar.addRow([a.data, avg(a.pre)]);
+    dtTemp.addRow([a.data, avg(a.temp)]);
+    dtUmi.addRow([a.data, avg(a.umi)]);
   });
-  new google.visualization.LineChart(document.getElementById('grafico')).draw(dtLine,{title:'Médias por hora',curveType:'function',legend:{position:'bottom'}});
-  new google.visualization.ColumnChart(document.getElementById('grafico_barras')).draw(dtBar,{title:'Pressão (média)',legend:{position:'none'},bars:'vertical'});
+  new google.visualization.LineChart(document.getElementById('grafico_temp'))
+    .draw(dtTemp, {title:'Temperatura (média por hora)', curveType:'function', legend:{position:'bottom'}});
+  new google.visualization.LineChart(document.getElementById('grafico_umi'))
+    .draw(dtUmi, {title:'Umidade (média por hora)', curveType:'function', legend:{position:'bottom'}});
 }
-

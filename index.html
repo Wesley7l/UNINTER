@@ -14,19 +14,19 @@
   </header>
   <main>
     <div class="filtros">
-      <button id="btnPlotar">Plotar</button>
       <label for="filtroDia">Dia:</label>
       <select id="filtroDia"></select>
       <label for="filtroMes">Mês:</label>
       <select id="filtroMes"></select>
       <label for="filtroAno">Ano:</label>
       <select id="filtroAno"></select>
+      <button id="btnPlotar">Plotar</button>
     </div>
     <div class="charts-container">
-      <div id="grafico" style="width:100%; max-width:600px; height:400px;"></div>
+      <div id="grafico_temp" style="width:100%; max-width:600px; height:300px;"></div>
+      <div id="grafico_umi" style="width:100%; max-width:600px; height:300px;"></div>
       <div id="gauge_div" style="width:200px; height:200px;"></div>
     </div>
-    <div id="grafico_barras" style="width:100%; max-width:800px; height:400px;"></div>
   </main>
   <footer>
     <p>&copy; 2025 Meu Site no GitHub</p>
