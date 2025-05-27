@@ -32,8 +32,8 @@ footer {
 }
 .chart-container {
   width: 100%;
-  max-width: 1600px;
-  height: 800px;
+  max-width: 1200px;
+  height: 600px;
   margin: 0 auto 30px;
 }
 #graficos_linha {
@@ -49,7 +49,7 @@ footer {
 }
 .gauge-container {
   display: block;
-  width: 300px;
-  height: 300px;
+  width: 150px;
+  height: 150px;
   margin: 0 auto 20px;
 }
