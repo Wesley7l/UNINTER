@@ -37,3 +37,24 @@ footer {
   bottom: 0;
   width: 100%;
 }
+/* Garante empilhamento vertical dos line charts */
+#graficos_linha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Garante empilhamento vertical dos gauges */
+#gauges {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cada gauge ficará em bloco, centralizado e com espaçamento */
+.gauge-container {
+  display: block;
+  width: 300px;      /* ou 100%, se preferir responsivo */
+  height: 300px;
+  margin: 0 auto 20px;
+}
