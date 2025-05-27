@@ -32,8 +32,8 @@ footer {
 }
 .chart-container {
   width: 100%;
-  max-width: 800px;
-  height: 400px;
+  max-width: 1600px;
+  height: 800px;
   margin: 0 auto 30px;
 }
 #graficos_linha {
