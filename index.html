@@ -15,18 +15,20 @@
   <main>
     <div class="filtros">
       <label for="filtroDia">Dia:</label>
-      <select id="filtroDia"></select>
+      <select id="filtroDia" onchange="aplicarFiltros()"></select>
       <label for="filtroMes">Mês:</label>
-      <select id="filtroMes"></select>
+      <select id="filtroMes" onchange="aplicarFiltros()"></select>
       <label for="filtroAno">Ano:</label>
-      <select id="filtroAno"></select>
+      <select id="filtroAno" onchange="aplicarFiltros()"></select>
       <button id="btnPlotar">Plotar</button>
     </div>
-    <div class="charts-container">
-      <div id="grafico_temp" style="width:100%; max-width:600px; height:300px;"></div>
-      <div id="grafico_umi"  style="width:100%; max-width:600px; height:300px;"></div>
-      <div id="gauge_temp_div" style="width:200px; height:200px;"></div>
-      <div id="gauge_umi_div"  style="width:200px; height:200px;"></div>
+    <div id="graficos_linha">
+      <div id="grafico_temp" class="chart-container"></div>
+      <div id="grafico_umi"  class="chart-container"></div>
+    </div>
+    <div id="gauges">
+      <div id="gauge_temp" class="gauge-container"></div>
+      <div id="gauge_umi"  class="gauge-container"></div>
     </div>
   </main>
   <footer>
