@@ -1,38 +1,162 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard</title>
+  <title>Dashboard - Datalogger Temperatura e Umidade</title>
   <link rel="stylesheet" href="style.css"/>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script defer src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
-    <h1>Dashboard</h1>
+    <h1>📊 Dashboard - Datalogger</h1>
+    <p class="subtitle">Análise de Temperatura e Umidade</p>
   </header>
+
   <main>
-    <div class="filtros">
-      <label for="filtroDia">Dia:</label>
-      <select id="filtroDia" onchange="aplicarFiltros()"></select>
-      <label for="filtroMes">Mês:</label>
-      <select id="filtroMes" onchange="aplicarFiltros()"></select>
-      <label for="filtroAno">Ano:</label>
-      <select id="filtroAno" onchange="aplicarFiltros()"></select>
-      <button id="btnPlotar">Plotar</button>
-    </div>
-    <div id="graficos_linha">
-      <div id="grafico_temp" class="chart-container"></div>
-      <div id="grafico_umi"  class="chart-container"></div>
-    </div>
-    <div id="gauges">
-      <div id="gauge_temp" class="gauge-container"></div>
-      <div id="gauge_umi"  class="gauge-container"></div>
-    </div>
+    <!-- Upload Section -->
+    <section class="upload-section">
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📁</div>
+        <p><strong>Clique ou arraste</strong> seu arquivo CSV aqui</p>
+        <p class="upload-hint">Formato: timestamp, temperatura, umidade</p>
+      </div>
+      <input type="file" id="fileInput" accept=".csv" style="display: none;" />
+      <div id="message"></div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters" id="filters" style="display: none;">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="dataInicio">Data Inicial</label>
+          <input type="date" id="dataInicio" />
+        </div>
+        <div class="filter-group">
+          <label for="dataFim">Data Final</label>
+          <input type="date" id="dataFim" />
+        </div>
+        <div class="filter-group">
+          <label for="filtroDia">Dia</label>
+          <select id="filtroDia" onchange="aplicarFiltros()">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filtroMes">Mês</label>
+          <select id="filtroMes" onchange="aplicarFiltros()">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filtroAno">Ano</label>
+          <select id="filtroAno" onchange="aplicarFiltros()">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="periodo">Agrupar Por</label>
+          <select id="periodo">
+            <option value="hora">Hora</option>
+            <option value="dia" selected>Dia</option>
+            <option value="semana">Semana</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" id="plotarBtn">📈 Plotar Gráfico</button>
+        <button class="btn btn-secondary" id="resetBtn">🔄 Limpar Filtros</button>
+        <button class="btn export-btn" id="exportBtn">⬇️ Exportar CSV</button>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="content" id="content" style="display: none;">
+      <div class="card">
+        <h2>🌡️ Temperatura vs Umidade</h2>
+        <div class="chart-container">
+          <canvas id="chart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📊 Últimas Leituras</h2>
+        <div class="gauges">
+          <div class="gauge">
+            <div class="gauge-value" id="tempAtual">--</div>
+            <div class="gauge-label">Temperatura (°C)</div>
+          </div>
+          <div class="gauge">
+            <div class="gauge-value" id="umidAtual">--</div>
+            <div class="gauge-label">Umidade (%)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats" id="stats" style="display: none;">
+      <h2>📈 Estatísticas do Período</h2>
+      <div class="stats-grid">
+        <div class="stat temp">
+          <div class="stat-label">Temperatura Máxima</div>
+          <div class="stat-value" id="tempMax">--</div>
+          <div class="stat-unit">°C</div>
+        </div>
+        <div class="stat temp">
+          <div class="stat-label">Temperatura Mínima</div>
+          <div class="stat-value" id="tempMin">--</div>
+          <div class="stat-unit">°C</div>
+        </div>
+        <div class="stat temp">
+          <div class="stat-label">Temperatura Média</div>
+          <div class="stat-value" id="tempMean">--</div>
+          <div class="stat-unit">°C</div>
+        </div>
+        <div class="stat umidade">
+          <div class="stat-label">Umidade Máxima</div>
+          <div class="stat-value" id="umidMax">--</div>
+          <div class="stat-unit">%</div>
+        </div>
+        <div class="stat umidade">
+          <div class="stat-label">Umidade Mínima</div>
+          <div class="stat-value" id="umidMin">--</div>
+          <div class="stat-unit">%</div>
+        </div>
+        <div class="stat umidade">
+          <div class="stat-label">Umidade Média</div>
+          <div class="stat-value" id="umidMean">--</div>
+          <div class="stat-unit">%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison" id="comparison" style="display: none;">
+      <h2>📅 Comparação de Períodos</h2>
+      <div class="chart-container">
+        <canvas id="comparisonChart"></canvas>
+      </div>
+      <table class="comparison-table" id="comparisonTable">
+        <thead>
+          <tr>
+            <th>Período</th>
+            <th>Temp. Média</th>
+            <th>Variação</th>
+            <th>Umid. Média</th>
+            <th>Variação</th>
+          </tr>
+        </thead>
+        <tbody id="comparisonBody"></tbody>
+      </table>
+    </section>
   </main>
+
   <footer>
-    <p>&copy; 2025 Wesley A. Almeida</p>
+    <p>&copy; 2025 Wesley A. Almeida | Datalogger Dashboard</p>
   </footer>
+
+  <script defer src="script.js"></script>
 </body>
 </html>
